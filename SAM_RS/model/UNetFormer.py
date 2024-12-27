@@ -5,7 +5,7 @@ from einops import rearrange, repeat
 
 from timm.models.layers import DropPath, to_2tuple, trunc_normal_
 import timm
-
+from transformers import AutoModel
 
 class ConvBNReLU(nn.Sequential):
     def __init__(self, in_channels, out_channels, kernel_size=3, dilation=1, stride=1, norm_layer=nn.BatchNorm2d, bias=False):
@@ -334,6 +334,8 @@ class UNetFormer(nn.Module):
                  ):
         super().__init__()
 
+        if backbone_name == 'swsl_resnet18':
+            backbone_name = AutoModel.from_pretrained("./SAM_RS/model/CMTFNet/backbone/swsl_resnet18")
         self.backbone = timm.create_model(backbone_name, features_only=True, output_stride=32,
                                           out_indices=(1, 2, 3, 4), pretrained=pretrained)
         encoder_channels = self.backbone.feature_info.channels()
