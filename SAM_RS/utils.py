@@ -88,6 +88,13 @@ elif DATASET == 'Urban':
            6 : (255, 195, 128)} # agriculture
     invert_palette = {v: k for k, v in palette.items()}
 
+print("MAIN: ",MAIN_FOLDER)
+print("DATA: ",DATA_FOLDER)
+print("LABEL: ",LABEL_FOLDER)
+print("BOUNDARY: ",BOUNDARY_FOLDER)
+print("OBJECT: ",OBJECT_FOLDER)
+print("ERODED: ",ERODED_FOLDER)
+
 def convert_to_color(arr_2d, palette=palette):
     """ Numeric labels to RGB-color encoding """
     arr_3d = np.zeros((arr_2d.shape[0], arr_2d.shape[1], 3), dtype=np.uint8)

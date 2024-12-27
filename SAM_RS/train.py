@@ -18,6 +18,16 @@ from model.FTUNetFormer import ft_unetformer as FTUNetFormer
 from model.ABCNet import ABCNet
 from model.CMTFNet.CMTFNet import CMTFNet
 
+# import os
+
+# file_path = './ISPRS_dataset/Vaihingen/top/top_mosaic_09cm_area1.tif'
+# # 检查文件是否存在
+# if os.path.exists(file_path):
+#     print(f"文件 {file_path} 存在！")
+# else:
+#     print(f"文件 {file_path} 不存在！")
+
+
 DATASET = 'Vaihingen'
 # DATASET = 'Urban'
 
@@ -31,14 +41,17 @@ try:
 except ImportError:
     from urllib import URLopener
 
+#Change the device
+device = torch.device("cuda" if torch.cuda.is_available() else "cpu")
+
 if MODEL == 'UNetformer':
-    net = UNetFormer(num_classes=N_CLASSES).cuda()
+    net = UNetFormer(num_classes=N_CLASSES).to(device)
 elif MODEL == 'FTUNetformer':
-    net = FTUNetFormer(num_=N_CLASSES).cuda()
+    net = FTUNetFormer(num_=N_CLASSES).to(device)
 elif MODEL == 'ABCNet':
-    net = ABCNet(num_classes=N_CLASSES).cuda()
+    net = ABCNet(num_classes=N_CLASSES).to(device)
 elif MODEL == 'CMTFNet':
-    net = CMTFNet(num_classes=N_CLASSES).cuda()
+    net = CMTFNet(num_classes=N_CLASSES).to(device)
 
 params = 0
 for name, param in net.named_parameters():
@@ -91,7 +104,7 @@ def test(net, test_ids, all=False, stride=WINDOW_SIZE[0], batch_size=BATCH_SIZE,
                 # Build the tensor
                 image_patches = [np.copy(img[x:x + w, y:y + h]).transpose((2, 0, 1)) for x, y, w, h in coords]
                 image_patches = np.asarray(image_patches)
-                image_patches = Variable(torch.from_numpy(image_patches).cuda(), volatile=True)
+                image_patches = Variable(torch.from_numpy(image_patches).to(device), volatile=True)
 
                 # Do the inference
                 outs = net(image_patches)
@@ -119,7 +132,7 @@ def test(net, test_ids, all=False, stride=WINDOW_SIZE[0], batch_size=BATCH_SIZE,
 def train(net, optimizer, epochs, scheduler=None, weights=WEIGHTS, save_epoch=1):
     losses = np.zeros(1000000)
     mean_losses = np.zeros(100000000)
-    weights = weights.cuda()
+    weights = weights.to(device)
 
     iter_ = 0
     MIoU_best = 0.30
@@ -130,7 +143,7 @@ def train(net, optimizer, epochs, scheduler=None, weights=WEIGHTS, save_epoch=1)
             scheduler.step()
         net.train()
         for batch_idx, (data, boundary, object, target) in enumerate(train_loader):
-            data, target = Variable(data.cuda()), Variable(target.cuda())
+            data, target = Variable(data.to(device)), Variable(target.to(device))
             optimizer.zero_grad()
             output = net(data)
             loss_ce = loss_calc(output, target, weights)

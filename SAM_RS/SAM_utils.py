@@ -17,7 +17,7 @@ from skimage.segmentation import find_boundaries
 from PIL import Image
 import time
 
-device ='cuda'
+device ='cuda' if torch.cuda.is_available() else 'cpu'
 sam = sam_model_registry ["vit_h"] (checkpoint ="./sam_vit_h_4b8939.pth")
 sam.to( device = device )
 
@@ -59,6 +59,7 @@ def SAMAug(tI , mask_generator):
     BoundaryPrior_output = BoundaryPrior_output.astype(np.uint8) 
     return BoundaryPrior_output,Objects_first_few  
 
+# directory_name='./loveDA/Urban/images_png/'
 directory_name='./loveDA/Urban/images_png/'
 
 img_list=[f for f in os.listdir(directory_name)]

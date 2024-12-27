@@ -3,7 +3,7 @@ import torch.nn as nn
 import torch.nn.functional as F
 from einops import rearrange, repeat
 
-from timm.models.layers import DropPath, to_2tuple, trunc_normal_
+from timm.layers import DropPath, to_2tuple, trunc_normal_
 import timm
 from transformers import AutoModel
 
@@ -327,7 +327,7 @@ class UNetFormer(nn.Module):
     def __init__(self,
                  decode_channels=64,
                  dropout=0.1,
-                 backbone_name='swsl_resnet18',
+                 backbone_name='resnet18.a1_in1k',
                  pretrained=True,
                  window_size=8,
                  num_classes=6
