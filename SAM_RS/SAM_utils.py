@@ -60,25 +60,47 @@ def SAMAug(tI , mask_generator):
     return BoundaryPrior_output,Objects_first_few  
 
 # directory_name='./loveDA/Urban/images_png/'
-directory_name='./loveDA/Urban/images_png/'
+directory_name='./ISPRS_dataset/Vaihingen/top/'
+
+# img_list=[f for f in os.listdir(directory_name)]
+# img_list=sorted(img_list)
+# start_time=time.time()
+# for img_input in img_list:
+#     if img_input.endswith('.png'):
+#         img_name=img_input.split(".")[0]
+#         image_type=".png"
+#         image = Image.open(directory_name+img_input)
+#         image = np.array(image)
+#         print(type(image))
+#         print(image.shape)
+#         BoundaryPrior_output, Objects_first_few=SAMAug(image, mask_generator)
+#         image_boundary = Image.fromarray(BoundaryPrior_output)
+#         Objects_first_few = Objects_first_few.astype(np.uint8)
+#         image_objects = Image.fromarray(Objects_first_few)
+#         image_boundary.save("./SAM/loveDA_obj_data/"+img_name+'_Boundary'+image_type)
+#         image_objects.save("./SAM/loveDA_obj_data/"+img_name+'_objects'+image_type)
 
 img_list=[f for f in os.listdir(directory_name)]
 img_list=sorted(img_list)
 start_time=time.time()
 for img_input in img_list:
-    if img_input.endswith('.png'):
+    if img_input.endswith('.tif'):
         img_name=img_input.split(".")[0]
-        image_type=".png"
+        image_type=".tif"
         image = Image.open(directory_name+img_input)
         image = np.array(image)
         print(type(image))
         print(image.shape)
+        new_file_boundary = "./ISPRS_dataset/Vaihingen/sam_boundary_merge/"+img_name+'_Boundary'+image_type
+        new_file_object = "./ISPRS_dataset/Vaihingen/V_merge/"+img_name+'_objects'+image_type
+        # os.makedirs(new_directory_boundary, exist_ok=True)
+        # os.makedirs(new_directory_object, exist_ok=True)
         BoundaryPrior_output, Objects_first_few=SAMAug(image, mask_generator)
         image_boundary = Image.fromarray(BoundaryPrior_output)
         Objects_first_few = Objects_first_few.astype(np.uint8)
         image_objects = Image.fromarray(Objects_first_few)
-        image_boundary.save("./SAM/loveDA_obj_data/"+img_name+'_Boundary'+image_type)
-        image_objects.save("./SAM/loveDA_obj_data/"+img_name+'_objects'+image_type)
+        image_boundary.save(new_file_boundary)
+        image_objects.save(new_file_object)
 end_time = time.time()
 run_time = end_time - start_time
 print(f"Runing time: {run_time} second.")
